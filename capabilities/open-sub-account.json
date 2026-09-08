@@ -1,0 +1,38 @@
+{
+  "apiVersion": "capability.interface.ai.local/v1",
+  "id": "open-sub-account",
+  "name": "Open sub-account",
+  "version": "1",
+  "description": "Irreversible confirm. Phase 3 replay must block this click; HITL is Phase 5.",
+  "app": {
+    "surface": "web",
+    "entry": "/",
+    "origin_allowlist": ["http://127.0.0.1"]
+  },
+  "input_schema": {
+    "type": "object",
+    "properties": {}
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {}
+  },
+  "risk": "irreversible",
+  "checkpoint": {
+    "kind": "text_visible",
+    "text": "Not authorized"
+  },
+  "known_outcomes": [],
+  "steps": [
+    {
+      "id": "s1",
+      "action": "click",
+      "target": {
+        "frame": "content",
+        "strategies": [
+          { "strategy": "role", "role": "button", "name": "Confirm open" }
+        ]
+      }
+    }
+  ]
+}

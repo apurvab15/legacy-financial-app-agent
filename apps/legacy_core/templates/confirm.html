@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Open Sub-Account</title>
+  <link rel="stylesheet" href="/static/core.css">
+</head>
+<body>
+  <table class="tb" cellpadding="4" cellspacing="0" border="1">
+    <tr>
+      <td>
+        <h1>Open Sub-Account</h1>
+        <p>This will open a sub-account{% if member_id %} for member {{ member_id }}{% endif %}. This action cannot be undone.</p>
+        <form method="post" action="/sub-account/confirm">
+          <input
+            type="submit"
+            id="ctl00_Main_btnConfirmOpen"
+            name="ctl00$Main$btnConfirmOpen"
+            class="btn"
+            value="Confirm open"
+          >
+        </form>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

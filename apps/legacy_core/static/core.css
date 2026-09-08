@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  background: #c0c0c0;
+  color: #000;
+  font-family: Tahoma, Verdana, Geneva, sans-serif;
+  font-size: 8pt;
+}
+
+.hdr {
+  background: #000080;
+  color: #fff;
+  font-weight: bold;
+  font-size: 10pt;
+  padding: 4px 8px;
+}
+
+.tb {
+  background: #d4d0c8;
+}
+
+.btn {
+  font-family: Tahoma, Verdana, Geneva, sans-serif;
+  font-size: 8pt;
+}
+
+.err {
+  background: #ffff99;
+  color: #cc0000;
+  border: 1px solid #cc0000;
+  padding: 4px;
+  font-weight: bold;
+  margin: 4px 0;
+}
+
+a {
+  color: #000080;
+  font-size: 8pt;
+}

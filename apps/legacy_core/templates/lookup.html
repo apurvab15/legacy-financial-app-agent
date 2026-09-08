@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inquiry</title>
+  <link rel="stylesheet" href="/static/core.css">
+</head>
+<body>
+  {% if error %}
+  <div class="err">{{ error }}</div>
+  {% endif %}
+  <form method="post" action="/inquiry">
+    {% if slow %}
+    <input type="hidden" name="slow" value="1">
+    {% endif %}
+    <table class="tb" cellpadding="4" cellspacing="0" border="1">
+      <tr>
+        <td>
+          <table class="tb" cellpadding="4" cellspacing="0" border="0">
+            <tr>
+              <td>Member ID</td>
+              <td>
+                <input
+                  type="text"
+                  id="ctl00_Main_txtCIF"
+                  name="ctl00$Main$txtCIF"
+                  aria-label="Member ID"
+                  class="tb"
+                  size="12"
+                  autocomplete="off"
+                >
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <input
+                  type="submit"
+                  id="ctl00_Main_btnInquiry"
+                  name="ctl00$Main$btnInquiry"
+                  class="btn"
+                  value="Inquiry"
+                >
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </form>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Member Profile</title>
+  <link rel="stylesheet" href="/static/core.css">
+</head>
+<body>
+  <table class="tb" cellpadding="4" cellspacing="0" border="1">
+    <tr>
+      <td>
+        <h1>Member Profile</h1>
+        <table class="tb" cellpadding="4" cellspacing="0" border="1">
+          <tr>
+            <td>Member name</td>
+            <td>{{ member.name }}</td>
+          </tr>
+          <tr>
+            <td>Member ID</td>
+            <td>{{ member_id }}</td>
+          </tr>
+          <tr>
+            <td>Tax ID</td>
+            <td>{{ member.masked_id }}</td>
+          </tr>
+          <tr>
+            <td>Savings balance</td>
+            <td>{{ member.savings_balance }}</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <table class="tb" cellpadding="4" cellspacing="0" border="1">
+                <tr>
+                  <td>Account</td>
+                  <td>Balance</td>
+                </tr>
+                <tr>
+                  <td>Share 00</td>
+                  <td>{{ member.savings_balance }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

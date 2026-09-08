@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login expired</title>
+  <link rel="stylesheet" href="/static/core.css">
+</head>
+<body>
+  <table class="tb" cellpadding="4" cellspacing="0" border="1">
+    <tr>
+      <td>
+        <div class="err">Login expired</div>
+        <p>Your session is no longer valid. Inquiry is blocked until the session is restored.</p>
+        <form method="post" action="/session/restore">
+          <input type="submit" class="btn" value="Restore session">
+        </form>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

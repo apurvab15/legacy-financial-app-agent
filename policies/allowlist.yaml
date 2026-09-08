@@ -1,0 +1,34 @@
+# Runtime allowlist (Phase 3). Replay checks this before every navigation and act.
+# Local mock only. No second Playwright path. No LLM.
+
+origins:
+  - http://127.0.0.1
+  - http://localhost
+
+# "/" is the shell entry only (exact). Other entries are prefixes.
+path_prefixes:
+  - /
+  - /inquiry
+  - /nav
+  - /member
+  - /static
+  - /sub-account
+  - /session
+
+allowed_actions:
+  - click
+  - fill
+  - extract
+  - wait
+
+denied_actions:
+  - download
+  - file_upload
+
+# Phase 3: block. Phase 5 may escalate instead.
+irreversible:
+  mode: block
+  control_names:
+    - Confirm open
+  risk_levels:
+    - irreversible
