@@ -10,6 +10,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from src.guardrails import PolicyDenied, assert_action_allowed, load_policy
+from src.hitl import build_operator
 from src.mock_server import ensure_mock
 from src.redact import RedactFilter
 from src.replay import load_capability, run_replay
@@ -47,6 +48,26 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--policy", type=Path, default=DEFAULT_POLICY)
     parser.add_argument("--headed", action="store_true", help="Show the browser")
+    parser.add_argument(
+        "--operator",
+        choices=["none", "cli", "auto"],
+        default="none",
+        help=(
+            "HITL operator surface. none: escalate and stop (default). "
+            "cli: print the intervention request and wait for resume/abort. "
+            "auto: scripted resume, for non-interactive demos"
+        ),
+    )
+    parser.add_argument(
+        "--operator-note",
+        help="Note recorded for --operator auto (what the human supposedly did)",
+    )
+    parser.add_argument(
+        "--max-handoffs",
+        type=int,
+        default=1,
+        help="How many times one run may hand the session to a human",
+    )
     parser.add_argument("--timeout-ms", type=int, default=15000)
     parser.add_argument(
         "--goal",
@@ -100,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
             max_steps=args.max_steps,
             output_path=Path(args.output),
             timeout_ms=args.timeout_ms,
+            operator=build_operator(args.operator, args.operator_note),
         )
         return _print_result(payload)
 
@@ -147,6 +169,8 @@ def main(argv: list[str] | None = None) -> int:
         timeout_ms=args.timeout_ms,
         entry_override=args.entry,
         policy=policy,
+        operator=build_operator(args.operator, args.operator_note),
+        max_handoffs=args.max_handoffs,
     )
     return _print_result(result)
 

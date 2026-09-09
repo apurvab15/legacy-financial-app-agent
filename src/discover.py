@@ -13,6 +13,13 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from src.compiler import artifact_contains_run_id, compile_capability
 from src.evidence import write_result, write_snapshots
 from src.guardrails import PolicyDenied, before_act, load_policy
+from src.hitl import (
+    NoOperator,
+    Operator,
+    write_ax_snapshot,
+    write_handoff_record,
+    write_intervention_request,
+)
 from src.llm import SYSTEM_PROMPT, LlmError, ToolCall, complete_turn, load_llm_config
 from src.mock_server import ensure_mock
 from src.observe import observe_ax_text, target_from_node
@@ -83,6 +90,7 @@ def run_discovery(
     max_steps: int = MAX_STEPS_DEFAULT,
     output_path: Path | None = None,
     timeout_ms: int = 15000,
+    operator: Operator | None = None,
 ) -> dict[str, Any]:
     load_dotenv(repo_root / ".env")
     load_dotenv()
@@ -171,11 +179,21 @@ def run_discovery(
                     done = True
                     break
                 if terminal == "escalate":
+                    reason = str(call.arguments.get("reason") or "escalate")
+                    _handoff(
+                        session,
+                        page,
+                        dest,
+                        repo_root,
+                        goal=goal,
+                        reason=reason,
+                        operator=operator or NoOperator(),
+                    )
                     result = ReplayResult(
                         status="escalated",
                         outcome_code="hitl_required",
                         expected="discovery completed",
-                        observed=redact_text(str(call.arguments.get("reason") or "escalate")),
+                        observed=redact_text(reason),
                     )
                     return _finish(
                         session,
@@ -296,6 +314,56 @@ def run_discovery(
             goal=goal,
             compile_ok=False,
         )
+
+
+def _handoff(
+    session: WebSession,
+    page: Any,
+    dest: Path,
+    repo_root: Path,
+    *,
+    goal: str,
+    reason: str,
+    operator: Operator,
+) -> None:
+    """Discovery escalate -> same-session handoff.
+
+    Discovery does not auto-resume the model loop; replay owns hand-back. With an
+    operator attached the prompt holds the browser open so a human can take over.
+    """
+    try:
+        write_snapshots(page, dest)
+        write_ax_snapshot(page, dest / "ax_before_handoff.json")
+        session.hand_to_human(f"model called escalate: {reason}")
+        request = write_intervention_request(
+            dest,
+            repo_root,
+            session_flags=session.flags(),
+            goal=goal,
+            failed_step="discovery",
+            why=f"model called escalate: {reason}",
+        )
+        logger.warning("intervention request -> %s", dest / "intervention_request.json")
+        decision = operator.review(request)
+        if decision.action == "resume":
+            session.hand_to_automation(decision.note)
+            write_ax_snapshot(page, dest / "ax_after_handoff.json")
+        write_handoff_record(
+            dest,
+            session_flags=session.flags(),
+            controller_log=session.controller_log,
+            operator=operator.name,
+            decision=decision,
+            reverify=None,
+            ax_before=str((dest / "ax_before_handoff.json").relative_to(repo_root)),
+            ax_after=(
+                str((dest / "ax_after_handoff.json").relative_to(repo_root))
+                if decision.action == "resume"
+                else None
+            ),
+        )
+    except Exception:
+        logger.exception("failed to record discovery handoff")
 
 
 def _apply_tool(

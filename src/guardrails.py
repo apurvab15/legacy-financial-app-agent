@@ -20,6 +20,16 @@ class PolicyDenied(Exception):
         self.observed = observed
 
 
+class HumanRequired(Exception):
+    """Policy wants a human to own this step. Routes to escalated, not failed."""
+
+    def __init__(self, outcome_code: str, *, expected: str, observed: str) -> None:
+        super().__init__(outcome_code)
+        self.outcome_code = outcome_code
+        self.expected = expected
+        self.observed = observed
+
+
 @dataclass
 class Policy:
     origins: list[str]
@@ -133,10 +143,17 @@ def assert_not_irreversible(
     if not is_irreversible_step(policy, action, step, capability):
         return
     names = _target_names(step) or [str(capability.get("risk"))]
+    observed = redact_text(", ".join(names))
+    if policy.irreversible_mode == "require_human":
+        raise HumanRequired(
+            "irreversible_blocked",
+            expected="a human to approve and perform this irreversible step",
+            observed=observed,
+        )
     raise PolicyDenied(
         "irreversible_blocked",
-        expected="safe or reversible action (HITL not enabled in Phase 3)",
-        observed=redact_text(", ".join(names)),
+        expected="safe or reversible action (irreversible.mode=block)",
+        observed=observed,
     )
 
 
@@ -147,10 +164,19 @@ def before_act(
     step: dict[str, Any],
     capability: dict[str, Any],
     current_urls: list[str] | None = None,
+    preflight: bool = False,
 ) -> None:
-    """Run before every fill/click/extract. Fail closed."""
+    """Run before every fill/click/extract. Fail closed.
+
+    On a preflight pass there is no live browser yet, so require_human is deferred
+    to the real step: a handoff needs a session for the operator to take over.
+    """
     assert_action_allowed(policy, action)
-    assert_not_irreversible(policy, action, step, capability)
+    try:
+        assert_not_irreversible(policy, action, step, capability)
+    except HumanRequired:
+        if not preflight:
+            raise
     for url in current_urls or []:
         if url:
             assert_navigation_allowed(policy, url)

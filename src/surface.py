@@ -7,13 +7,18 @@ CSS is never a primary strategy.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Callable
+from weakref import WeakKeyDictionary
 
 from playwright.sync_api import FrameLocator, Locator, Page, TimeoutError as PlaywrightTimeoutError
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_STRATEGY_TIMEOUT_MS = 2500
+
+# Mutating actions. Reads (extract, detect_visible) stay open while a human drives,
+# because re-verification on hand-back has to observe the page.
+MUTATING_ACTIONS = ("fill", "click")
 
 
 class LocatorMiss(Exception):
@@ -31,6 +36,34 @@ class MissingFrame(Exception):
     def __init__(self, frame_name: str) -> None:
         super().__init__(f"frame {frame_name!r} not found")
         self.frame_name = frame_name
+
+
+class ControllerLocked(Exception):
+    """Automation tried to act while the operator owns the session (CONTRACT.md 5.1)."""
+
+    def __init__(self, action: str, *, expected: str, observed: str) -> None:
+        super().__init__(f"automation may not {action} while controller is human")
+        self.action = action
+        self.expected = expected
+        self.observed = observed
+
+
+# Registered by WebSession so the check sits on the act itself, not on the callers.
+_CONTROLLER_GATES: "WeakKeyDictionary[Page, Callable[[str], None]]" = WeakKeyDictionary()
+
+
+def register_controller_gate(page: Page, gate: Callable[[str], None]) -> None:
+    _CONTROLLER_GATES[page] = gate
+
+
+def clear_controller_gate(page: Page) -> None:
+    _CONTROLLER_GATES.pop(page, None)
+
+
+def assert_controller_allows(page: Page, action: str) -> None:
+    gate = _CONTROLLER_GATES.get(page)
+    if gate is not None:
+        gate(action)
 
 
 def frame_locator(page: Page, name: str) -> FrameLocator:
@@ -134,11 +167,13 @@ def resolve_target(page: Page, target: dict[str, Any], action: str, *, timeout_m
 
 
 def fill(page: Page, target: dict[str, Any], value: str, *, timeout_ms: int) -> None:
+    assert_controller_allows(page, "fill")
     loc = resolve_target(page, target, "fill", timeout_ms=timeout_ms)
     loc.fill(value)
 
 
 def click(page: Page, target: dict[str, Any], *, timeout_ms: int) -> None:
+    assert_controller_allows(page, "click")
     loc = resolve_target(page, target, "click", timeout_ms=timeout_ms)
     loc.click()
 

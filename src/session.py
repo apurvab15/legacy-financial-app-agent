@@ -4,14 +4,16 @@ from __future__ import annotations
 
 import logging
 import os
+import uuid
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 from urllib.parse import urljoin, urlparse
 
 from playwright.sync_api import Browser, BrowserContext, Page, Playwright, Route, sync_playwright
 
 from src.guardrails import Policy, assert_navigation_allowed
 from src.redact import redact_text
+from src.surface import ControllerLocked, clear_controller_gate, register_controller_gate
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +33,12 @@ class WebSession:
     """One browser, one page, one tracing context. Do not launch a second Playwright path later."""
 
     def __init__(self, *, headed: bool = False, policy: Policy | None = None) -> None:
+        self.session_id = uuid.uuid4().hex[:12]
         self.controller: Controller = "automation"
         self.paused = False
         self.headed = headed
         self.policy = policy
+        self.controller_log: list[dict[str, str]] = []
         self._pw: Playwright | None = None
         self.browser: Browser | None = None
         self.context: BrowserContext | None = None
@@ -52,7 +56,42 @@ class WebSession:
             self._install_network_guard(self.policy)
         self.controller = "automation"
         self.paused = False
+        register_controller_gate(self.page, self._gate)
         return self.page
+
+    # --- HITL controller (CONTRACT.md 5.1) -------------------------------------
+    # One live browser, one page. Handoff flips this flag; it never opens a window.
+
+    def _gate(self, action: str) -> None:
+        if self.controller != "automation":
+            raise ControllerLocked(
+                action,
+                expected="controller=automation",
+                observed=f"controller={self.controller} paused={self.paused}",
+            )
+
+    def flags(self) -> dict[str, Any]:
+        return {
+            "controller": self.controller,
+            "session_id": self.session_id,
+            "paused": self.paused,
+        }
+
+    def hand_to_human(self, reason: str) -> None:
+        self.controller = "human"
+        self.paused = True
+        self.controller_log.append({"controller": "human", "reason": redact_text(reason)})
+        logger.warning(
+            "controller automation -> human (session %s): %s", self.session_id, redact_text(reason)
+        )
+
+    def hand_to_automation(self, note: str) -> None:
+        self.controller = "automation"
+        self.paused = False
+        self.controller_log.append({"controller": "automation", "reason": redact_text(note)})
+        logger.warning(
+            "controller human -> automation (session %s): %s", self.session_id, redact_text(note)
+        )
 
     def _install_network_guard(self, policy: Policy) -> None:
         if self.page is None:
@@ -101,6 +140,8 @@ class WebSession:
         self.context.tracing.stop(path=str(dest))
 
     def close(self) -> None:
+        if self.page is not None:
+            clear_controller_gate(self.page)
         if self.browser is not None:
             self.browser.close()
             self.browser = None

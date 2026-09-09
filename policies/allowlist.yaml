@@ -25,7 +25,9 @@ denied_actions:
   - download
   - file_upload
 
-# Phase 3: block. Phase 5 may escalate instead.
+# mode: block         -> refuse the step, status failed / irreversible_blocked (Phase 3 default)
+# mode: require_human -> hand the live session to an operator, status escalated
+#                        / irreversible_blocked. Automation never performs the click.
 irreversible:
   mode: block
   control_names:

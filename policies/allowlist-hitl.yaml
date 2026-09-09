@@ -1,0 +1,33 @@
+# Phase 5 variant of allowlist.yaml: identical except irreversible.mode.
+# Use with --policy policies/allowlist-hitl.yaml to demo the human handoff
+# instead of the hard block. Automation still never performs the click.
+
+origins:
+  - http://127.0.0.1
+  - http://localhost
+
+path_prefixes:
+  - /
+  - /inquiry
+  - /nav
+  - /member
+  - /static
+  - /sub-account
+  - /session
+
+allowed_actions:
+  - click
+  - fill
+  - extract
+  - wait
+
+denied_actions:
+  - download
+  - file_upload
+
+irreversible:
+  mode: require_human
+  control_names:
+    - Confirm open
+  risk_levels:
+    - irreversible
