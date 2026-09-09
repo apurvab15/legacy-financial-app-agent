@@ -1,0 +1,5 @@
+-r requirements.txt
+
+# Tests only. No LLM and no network are used by the suite.
+pytest>=8.0.0
+jsonschema>=4.20.0
