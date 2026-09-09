@@ -1,0 +1,9 @@
+{
+  "session_id": "5bfd160be79e",
+  "goal": "Open Core Inquiry, look up a member by ID, return current savings balance. (params: member_id=****2345)",
+  "failed_step": "s1",
+  "why": "session_expired: Login expired banner in frame 'content'",
+  "ax_snapshot_path": "evidence/replay-session_expired/ax.json",
+  "dom_snapshot_path": "evidence/replay-session_expired/dom.html",
+  "controller": "human"
+}

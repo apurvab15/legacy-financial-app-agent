@@ -1,0 +1,9 @@
+{
+  "status": "escalated",
+  "outcome_code": "irreversible_blocked",
+  "outputs": {},
+  "failed_step": "s1",
+  "expected": "a human to approve and perform this irreversible step",
+  "observed": "Confirm open (after resume: human_owns_step)",
+  "evidence_dir": "evidence/replay-irreversible_blocked"
+}

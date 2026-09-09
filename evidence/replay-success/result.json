@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "outcome_code": "ok",
+  "outputs": {
+    "savings_balance": "1,240.55"
+  },
+  "failed_step": null,
+  "expected": "heading 'Member Profile'",
+  "observed": "heading 'Member Profile'",
+  "evidence_dir": "evidence/replay-success"
+}

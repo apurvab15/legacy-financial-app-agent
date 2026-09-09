@@ -1,0 +1,68 @@
+{
+  "url": "http://127.0.0.1:8000/member/****2345",
+  "title": "Member Profile",
+  "text": "Member Profile\nMember name\tJane Member\nMember ID\t****2345\nTax ID\t***-**-0000\nSavings balance\t1,240.55\n\nAccount\tBalance\nShare 00\t1,240.55",
+  "headings": [
+    "Member Profile"
+  ],
+  "buttons": [],
+  "textboxes": [],
+  "ax_nodes": [
+    {
+      "role": "RootWebArea",
+      "name": "Core Inquiry"
+    },
+    {
+      "role": "none",
+      "name": null
+    },
+    {
+      "role": "none",
+      "name": null
+    },
+    {
+      "role": "LayoutTable",
+      "name": ""
+    },
+    {
+      "role": "none",
+      "name": null
+    },
+    {
+      "role": "LayoutTableRow",
+      "name": ""
+    },
+    {
+      "role": "LayoutTableRow",
+      "name": ""
+    },
+    {
+      "role": "LayoutTableCell",
+      "name": "Core Inquiry"
+    },
+    {
+      "role": "LayoutTableCell",
+      "name": ""
+    },
+    {
+      "role": "LayoutTableCell",
+      "name": ""
+    },
+    {
+      "role": "StaticText",
+      "name": "Core Inquiry"
+    },
+    {
+      "role": "Iframe",
+      "name": ""
+    },
+    {
+      "role": "Iframe",
+      "name": ""
+    },
+    {
+      "role": "InlineTextBox",
+      "name": "Core Inquiry"
+    }
+  ]
+}

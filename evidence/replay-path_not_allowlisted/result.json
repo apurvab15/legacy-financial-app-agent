@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "outcome_code": "path_not_allowlisted",
+  "outputs": {},
+  "failed_step": null,
+  "expected": "path prefix in ['/', '/inquiry', '/nav', '/member', '/static', '/sub-account', '/session']",
+  "observed": "/admin",
+  "evidence_dir": "evidence/replay-path_not_allowlisted"
+}

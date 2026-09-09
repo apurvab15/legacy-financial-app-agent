@@ -1,0 +1,9 @@
+{
+  "status": "escalated",
+  "outcome_code": "session_expired",
+  "outputs": {},
+  "failed_step": "s1",
+  "expected": "role=textbox name='Member ID'; nearby_text='Member ID'",
+  "observed": "Login expired banner in frame 'content' (after resume: still_session_expired)",
+  "evidence_dir": "evidence/replay-session_expired"
+}

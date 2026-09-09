@@ -1,0 +1,9 @@
+{
+  "session_id": "e****5544c0",
+  "goal": "Irreversible confirm. Phase 3 replay must block this click; HITL is Phase 5.",
+  "failed_step": "s1",
+  "why": "irreversible_blocked: Confirm open",
+  "ax_snapshot_path": "evidence/replay-irreversible_blocked/ax.json",
+  "dom_snapshot_path": "evidence/replay-irreversible_blocked/dom.html",
+  "controller": "human"
+}

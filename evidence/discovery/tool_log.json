@@ -1,0 +1,23 @@
+[
+  {
+    "action": "fill",
+    "role": "textbox",
+    "name": "Member ID",
+    "nearby": "Member ID",
+    "key": null
+  },
+  {
+    "action": "click",
+    "role": "button",
+    "name": "Inquiry",
+    "nearby": "",
+    "key": null
+  },
+  {
+    "action": "extract",
+    "role": "cell",
+    "name": "1,240.55",
+    "nearby": "Savings balance",
+    "key": "savings_balance"
+  }
+]

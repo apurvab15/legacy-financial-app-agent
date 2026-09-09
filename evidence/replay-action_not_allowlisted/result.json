@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "outcome_code": "action_not_allowlisted",
+  "outputs": {},
+  "failed_step": null,
+  "expected": "one of ['click', 'extract', 'fill', 'wait']",
+  "observed": "download",
+  "evidence_dir": "evidence/replay-action_not_allowlisted"
+}

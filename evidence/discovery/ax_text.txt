@@ -1,0 +1,10 @@
+Observation of frame 'content' (accessibility TEXT only; no screenshot, no pixels).
+Use refs in tools. Refs are invalid after the page changes.
+
+[e1] role=heading name="Member Profile"
+[e2] role=cell name="Jane Member" nearby="Member name" extractable
+[e3] role=cell name="****2345" nearby="Member ID" extractable
+[e4] role=cell name="***-**-0000" nearby="Tax ID" extractable
+[e5] role=cell name="1,240.55" nearby="Savings balance" extractable
+[e6] role=cell name="Balance" nearby="Account" extractable
+[e7] role=cell name="1,240.55" nearby="Share 00" extractable

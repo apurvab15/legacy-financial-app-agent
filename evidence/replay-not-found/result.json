@@ -1,0 +1,9 @@
+{
+  "status": "business_outcome",
+  "outcome_code": "member_not_found",
+  "outputs": {},
+  "failed_step": null,
+  "expected": "Record not found",
+  "observed": "Record not found",
+  "evidence_dir": "evidence/replay-not-found"
+}

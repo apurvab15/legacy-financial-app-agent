@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "outcome_code": "origin_not_allowlisted",
+  "outputs": {},
+  "failed_step": null,
+  "expected": "origin in ['http://127.0.0.1', 'http://localhost']",
+  "observed": "http://example.com/",
+  "evidence_dir": "evidence/replay-origin_not_allowlisted"
+}
