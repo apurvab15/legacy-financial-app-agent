@@ -16,6 +16,10 @@ flowchart LR
   ARTIFACT --> REPLAY
   REPLAY --> RESULT["src/result.py"]
 ```
+// explain this diagram, link to the flow chart .py 
+1. discover - works step by step, why gemini, explain the cost of gemini
+
+2. how reply and hitl works 
 
 Three stages with one artifact between them.
 
@@ -189,8 +193,6 @@ no key at all, which means the deterministic path has no credential to leak.
 
 ## 7. Cuts
 
-Deliberate omissions, so the scope is not mistaken for the claim:
-
 - **No image screenshots.** AX text only, everywhere — including evidence. Cost,
   PII exposure, and brittleness. If a control has no accessible name, this build
   cannot see it.
@@ -205,9 +207,6 @@ Deliberate omissions, so the scope is not mistaken for the claim:
   schema stub: `tenant` is optional and no committed artifact sets it. There is
   no overlay resolver, no second tenant and no synonym table. One tenant is
   exercised.
-- **No RL, no local model training, no fine-tuning.** Discovery is a
-  prompted-tool loop against a hosted model. Nothing learns from replay outcomes;
-  improving a capability means re-discovering or hand-editing the artifact.
 - **No queues, workers or services.** A CLI and a Flask mock. No API server, no
   scheduler, no persistence beyond files on disk, no concurrency story.
 - **One capability family.** Savings-balance lookup, plus `open-sub-account`
