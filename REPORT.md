@@ -6,6 +6,9 @@ different problems** and should not share a code path: discovery is expensive,
 non-deterministic and needs judgment; execution needs to be boring, auditable and
 cheap. Everything below follows from keeping them apart.
 
+![App Image](/images/legacy-app-image)
+
+
 ## 1. Architecture
 
 ```mermaid
