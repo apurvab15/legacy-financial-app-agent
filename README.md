@@ -12,20 +12,21 @@ flowchart LR
     B --> C["Typed Capability Artifact"]
     C --> D["Deterministic Replay"]
     D --> E["Final Result"]
-
     D -.-> F["Human-in-the-Loop"]
     F -.-> D
 ```
 
 # Intution 
-The intuition behind the process is that most legacy banking system, have old but repeatable structure that can be exploited, the LLM uses the text structure, 
-this structure of 
+Legacy enterprise applications are often stable in the ways that matter for automation: their screens, labels, and workflows, but their underlying HTML can be difficult to automate reliably. These applications may use framesets, deeply nested layout tables, and generated IDs that can change as the UI structure changes.
 
+To make automation more robust, this system focuses on the **semantic meaning of controls** rather than their raw DOM structure. It builds a simplified representation of the page using information such as roles, accessible names, and labels from nearby table cells. This is especially important for legacy pages where the browser's accessibility tree may contain mostly LayoutTable and unnamed nodes.
 
+The LLM interacts only with this text-based representation of the page and it can perform five actions: `fill`, `click`, `extract`, `done`, and `escalate`. Its role is to understand the goal and map it to the appropriate controls on the live page. This discovery happens only once, and thus the token cost is very low :)!
 
+Once the task is successfully completed, the system converts the successful actions into a versioned, parameterized capability artifact, a recipe to follow next time. The artifact contains the steps needed to repeat the task, its inputs and outputs, a checkpoint for verifying success, and known outcomes.
 
+All subsequent executions use this recipe through deterministic replay, without the LLM making decisions. This makes repeated automation more predictable, reliable, and cheaper.
 
----
 
 ## Setup
 
@@ -41,9 +42,6 @@ playwright install chromium
 The mock server starts itself on `http://127.0.0.1:8000` when a command needs it,
 so there is nothing else to launch.
 
-> On Apple Silicon, if Playwright reports a missing `chrome-headless-shell`
-> binary, force a matching download with `playwright install --force chromium`.
-
 ### LLM API Key 
 
 ```bash
@@ -55,15 +53,6 @@ GEMINI_API_KEY=your-key-here
 DISCOVERY_MODEL=gemini-3.5-flash
 DISCOVERY_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 ```
-
-Google Gemini is reached through its OpenAI-compatible endpoint with `httpx`; no
-vendor SDK. `.env` is gitignored — only `.env.example` is committed.
-
-Free-tier keys allow **20 requests per day per model** and one discovery run
-costs about five, so `src/llm.py` falls back down a chain of flash models when
-one is saturated or out of quota. Override the chain with
-`DISCOVERY_FALLBACK_MODELS`. `gemini-2.5-flash` is closed to new keys, so name a
-current model.
 
 ---
 
