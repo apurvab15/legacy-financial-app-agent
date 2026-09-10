@@ -6,19 +6,6 @@ that artifact **deterministically with no model in the loop**. When the UI block
 it, it either classifies the situation as a business outcome or hands the live
 browser session to a human and takes it back afterwards.
 
-The target app (`apps/legacy_core`) is a deliberately awful mock: frameset-style
-`iframe`, `ctl00_`-prefixed ids, table layout, server round-trips.
-
-- **Contracts** (frozen first, everything else obeys them): [`docs/CONTRACT.md`](docs/CONTRACT.md)
-- **Design write-up**: [`REPORT.md`](REPORT.md)
-- **Handoff mechanics**: [`docs/HITL.md`](docs/HITL.md)
-- **Mock UI tour**: [`docs/MOCK_UI.md`](docs/MOCK_UI.md)
-- **Committed run artifacts**: [`evidence/README.md`](evidence/README.md)
-
-# Intution 
-
-
-
 ```mermaid
 flowchart LR
     A["Goal"] --> B["LLM Discovery<br/>Gemini-3.5-Flash"]
@@ -29,6 +16,13 @@ flowchart LR
     D -.-> F["Human-in-the-Loop"]
     F -.-> D
 ```
+
+# Intution 
+The intuition behind the process is that most legacy banking system, have old but repeatable structure that can be exploited, the LLM uses the text structure, 
+this structure of 
+
+
+
 
 
 ---
