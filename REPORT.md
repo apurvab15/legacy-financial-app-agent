@@ -6,7 +6,10 @@ different problems** and should not share a code path: discovery is expensive,
 non-deterministic and needs judgment; execution needs to be boring, auditable and
 cheap. Everything below follows from keeping them apart.
 
-![App Image](/images/legacy-app-image)
+<p align="center">
+  <img src="images/legacy-app-image.png" width="45%" alt="Left Image">
+  <img src="images/user-search-result-image.png" width="45%" alt="Right Image">
+</p>
 
 
 ## 1. Architecture
