@@ -94,6 +94,32 @@ control model as OS accessibility APIs** (`AXUIElement`, UIA), so the observe
 and act interfaces port to a Win32 or terminal surface without touching the
 capability schema or replay — only the adapter changes.
 
+***Gemini: tokens and rough cost***
+
+**When:** discovery only.  
+**Model:** `gemini-3.5-flash` via Google’s OpenAI-compatible `chat/completions` endpoint.  
+**What is sent each turn:** full message history + the five tool schemas (~400 tokens of tools alone, every call).
+
+For a successful lookup on this mock (typical ~4 model turns: fill → click → extract → done):
+
+| | Approx |
+|---|---|
+| Input tokens (whole run) | ~4,500 |
+| Output tokens | ~250 (short tool calls) |
+| Total | ~4,700–5,000 |
+
+Input grows because tools + system (~630 tokens) are resent every turn, and observations (~140 each) accumulate. Call 1 is ~800 tokens in; call 4 is ~1,400.
+
+**Paid-tier rough cost** for Gemini 3.5 Flash (list prices ~**$1.50 / 1M input** and **$9.00 / 1M output**, including thinking tokens if enabled):
+
+```text
+4500 × $1.50 / 1e6  +  250 × $9.00 / 1e6  ≈  $0.009
+```
+
+So about **0.9¢ per successful discovery** on this flow. On the free tier the same run is $0 until you hit per-model daily quota. Replay remains **$0** either way.
+
+These are char/4 estimates from a saved run, not billed meter reads; retries, escalate paths, or thinking tokens can push the total higher.
+
 ## 2. Artifact schema
 
 `schemas/capability.schema.json`, frozen in `docs/CONTRACT.md` §2 before any code
