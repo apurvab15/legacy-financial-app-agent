@@ -8,6 +8,15 @@ cheap. Everything below follows from keeping them apart.
 
 ## 1. Architecture
 
+```mermaid
+flowchart LR
+  CLI["src/cli.py"] --> DISCOVER["src/discover.py"]
+  CLI --> REPLAY["src/replay.py"]
+  DISCOVER --> ARTIFACT["capabilities/*.json"]
+  ARTIFACT --> REPLAY
+  REPLAY --> RESULT["src/result.py"]
+```
+
 Three stages with one artifact between them.
 
 **Discover** (`src/discover.py`) runs an observe-decide-act loop against the live
