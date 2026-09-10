@@ -24,12 +24,52 @@ flowchart LR
   ARTIFACT --> REPLAY
   REPLAY --> RESULT["src/result.py"]
 ```
-// explain this diagram, link to the flow chart .py 
-1. discover - works step by step, why gemini, explain the cost of gemini
+### 1. `src/cli.py` — the front door
 
-2. how reply and hitl works 
+One entry point: `python -m src …`
 
-Three stages with one artifact between them.
+- If you pass `--goal` / `discover` → discovery path (needs `GEMINI_API_KEY`).
+- Otherwise → replay path (no key).
+- Starts / reuses the Flask mock at `http://127.0.0.1:8000`, loads policy YAML, chooses headed/headless and HITL operator mode.
+
+Think of it as traffic control, not business logic.
+
+### 2. `src/discover.py` — observe → decide → act (LLM once)
+
+This is the only place that calls Gemini.
+
+Rough loop:
+
+1. Open Playwright against the mock (`content` frame).
+2. Build a compact text observation (role / name / nearby / refs) — not a screenshot.
+3. Send system prompt + goal + observation to Gemini with five tools: `fill`, `click`, `extract`, `done`, `escalate`.
+4. Execute the tool against the live page (after allowlist checks).
+5. Re-observe, append history, call again until `done` / escalate / max steps.
+6. On success, `src/compiler.py` turns the successful actions into a capability JSON (parameterized `member_id`, locators, checkpoint, known outcomes). The model’s chat is discarded.
+
+So discovery grounds the goal on the live UI; the compiler writes the recipe.
+
+### 3. `capabilities/*.json` — the durable skill
+
+Versioned artifact: steps, locator strategies (role+name first), `input_schema` / `output_schema`, checkpoint, `known_outcomes`.
+
+Examples in the repo:
+
+- `lookup-savings-balance.json` — hand-written (replay worked before LLM existed)
+- `lookup-savings-balance.discovered.json` — compiled from a discovery run
+- `open-sub-account.json` — irreversible / HITL demo
+
+This is the product of discovery and the input to replay. Same file can be reused for many members with no more model calls.
+
+### 4. `src/replay.py` — deterministic execution (no LLM)
+
+Loads the artifact, binds `--member-id`, walks steps in order, resolves locators, classifies outcomes (`success` / `business_outcome` / `failed` / `escalated`). Session expired or irreversible steps can pause for HITL on the same browser session, then re-verify before continuing.
+
+Replay cost in API dollars: **$0**.
+
+### 5. `src/result.py` — typed exit status
+
+Structured result: status, outcome code, outputs, expected vs observed, evidence dir. Written under `evidence/<run>/` with traces and redacted AX/DOM snapshots.
 
 **Discover** (`src/discover.py`) runs an observe-decide-act loop against the live
 mock. Each turn it renders frame `content` as compact **AX-tree text** with
