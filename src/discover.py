@@ -1,4 +1,4 @@
-"""Observe-decide-act discovery loop. AX-tree TEXT in; no screenshots; no RL."""
+"""Observe-decide-act discovery loop. AX-tree TEXT in."""
 
 from __future__ import annotations
 
