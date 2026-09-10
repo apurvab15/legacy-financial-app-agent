@@ -1,4 +1,4 @@
-# Legacy financial app — discover once, replay deterministically
+# Legacy Financial Agent : Discover, Record, Replay
 
 An agent learns a task in a legacy-style banking web app by driving it once with
 an LLM, compiles what it learned into a **capability artifact**, and then replays
@@ -14,6 +14,22 @@ The target app (`apps/legacy_core`) is a deliberately awful mock: frameset-style
 - **Handoff mechanics**: [`docs/HITL.md`](docs/HITL.md)
 - **Mock UI tour**: [`docs/MOCK_UI.md`](docs/MOCK_UI.md)
 - **Committed run artifacts**: [`evidence/README.md`](evidence/README.md)
+
+# Intution 
+
+
+
+```mermaid
+flowchart LR
+    A["Goal"] --> B["LLM Discovery<br/>Gemini-3.5-Flash"]
+    B --> C["Typed Capability Artifact"]
+    C --> D["Deterministic Replay"]
+    D --> E["Final Result"]
+
+    D -.-> F["Human-in-the-Loop"]
+    F -.-> D
+```
+
 
 ---
 
@@ -34,7 +50,7 @@ so there is nothing else to launch.
 > On Apple Silicon, if Playwright reports a missing `chrome-headless-shell`
 > binary, force a matching download with `playwright install --force chromium`.
 
-### `.env` (discovery only)
+### LLM API Key 
 
 ```bash
 cp .env.example .env
@@ -54,19 +70,6 @@ costs about five, so `src/llm.py` falls back down a chain of flash models when
 one is saturated or out of quota. Override the chain with
 `DISCOVERY_FALLBACK_MODELS`. `gemini-2.5-flash` is closed to new keys, so name a
 current model.
-
-### REPLAY NEEDS NO KEY
-
-**Everything below except the `discover` command runs with no `GEMINI_API_KEY`,
-no network egress and no LLM.** Replay reads a committed JSON artifact and
-executes it. That is the whole point of the split: discovery is the expensive,
-non-deterministic part and it happens once, offline from production traffic.
-
-To prove it, unset the key:
-
-```bash
-env -u GEMINI_API_KEY python -m src --member-id 12345
-```
 
 ---
 
@@ -220,9 +223,9 @@ python scripts/verify_phase5.py
 | `src/redact.py` | Digit-run and secret masking |
 | `evidence/` | Committed run artifacts (traces, AX/DOM, handoffs) |
 
-## Result contract
+## Result 
 
-Every replay ends in exactly one of four statuses ([`docs/CONTRACT.md`](docs/CONTRACT.md) §3):
+Every replay ends in exactly one of four statuses :
 
 | Status | Meaning |
 | --- | --- |
