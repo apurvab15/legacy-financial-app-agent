@@ -6,9 +6,11 @@ different problems** and should not share a code path: discovery is expensive,
 non-deterministic and needs judgment; execution needs to be boring, auditable and
 cheap. Everything below follows from keeping them apart.
 
+Here we are building an AI agent for computer-use automation. We chose to mock an old-style UI like the one below, with a list of allowed operations and a compact accessibility-style view of the page rather than screenshots. Only in the discovery loop is the LLM called: it maps the live UI to actions until the task succeeds, and that successful path is compiled into a recipe. Replay then runs that recipe as needed, without calling the model again.
+
 <p align="center">
-  <img src="images/legacy-app-image.png" width="45%" alt="Left Image">
-  <img src="images/user-search-result-image.png" width="45%" alt="Right Image">
+  <img src="images/legacy-app-image.png" width="45%" alt="Landing page">
+  <img src="images/user-search-result-image.png" width="45%" alt="User search result">
 </p>
 
 
